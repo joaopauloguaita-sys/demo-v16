@@ -1,0 +1,122 @@
+{
+  "conversas": {
+    "20260807231156": {
+      "mensagens": [
+        {
+          "role": "user",
+          "content": "quais os horarios de aula de geografia do 5º ano A"
+        },
+        {
+          "role": "assistant",
+          "content": "Sábado não é um dia de aula na escola. Para obter o horário de aula de Geografia do 5º ano A, você precisaria saber o dia da semana e o horário atual. A função <function=horario_atual> {\"turma\": \"5º Ano A\"} </function> deve ser usada em um dia de aula para obter a informação desejada."
+        },
+        {
+          "role": "user",
+          "content": "quais os horários de aula de português do 5º ano a?"
+        },
+        {
+          "role": "assistant",
+          "content": "😅 Você atingiu o limite diário gratuito de uso da IA. Aguarde um pouco (geralmente libera em minutos) ou peça pra alguém aumentar o plano em console.groq.com/settings/billing."
+        },
+        {
+          "role": "user",
+          "content": "qual seu nome?"
+        },
+        {
+          "role": "assistant",
+          "content": "Sou a SofIA, uma assistente virtual inteligente e prestativa. Fui criada por João Paulo A. Guaita."
+        },
+        {
+          "role": "user",
+          "content": "quais os horarios de aula de portugues do 5º ano A?"
+        },
+        {
+          "role": "assistant",
+          "content": "😅 Você atingiu o limite diário gratuito de uso da IA. Aguarde um pouco (geralmente libera em minutos) ou peça pra alguém aumentar o plano em console.groq.com/settings/billing."
+        },
+        {
+          "role": "user",
+          "content": "me da a receita de um bolo de chocolate"
+        },
+        {
+          "role": "assistant",
+          "content": "😅 Você atingiu o limite diário gratuito de uso da IA. Aguarde um pouco (geralmente libera em minutos) ou peça pra alguém aumentar o plano em console.groq.com/settings/billing."
+        },
+        {
+          "role": "user",
+          "content": "quais os horarios de aula de geografia do 5º ano a?"
+        },
+        {
+          "role": "assistant",
+          "content": "Não encontrei aulas de 'Geografia' na grade de 5º ANO A."
+        },
+        {
+          "role": "user",
+          "content": "e de portuguEs do 1º ano a?"
+        },
+        {
+          "role": "assistant",
+          "content": "Não encontrei aulas de 'Português' na grade de 1º ANO A."
+        },
+        {
+          "role": "user",
+          "content": "quai os telefones dos alunos do 1º ano A? todos"
+        },
+        {
+          "role": "assistant",
+          "content": "Não encontrei os telefones dos alunos do 1º ano A pois não consegui encontrar a turma específica \"1º ANO A\" no sistema."
+        },
+        {
+          "role": "user",
+          "content": "Qual o nome dos alunos que são alérgicos?"
+        },
+        {
+          "role": "assistant",
+          "content": "Não encontrei os nomes dos alunos que são alérgicos. Isso ocorreu porque a busca por \"alunos alérgicos\" não retornou resultados, indicando que não há informações específicas sobre alergias de alunos no sistema. Se você tiver mais detalhes ou precisar de ajuda com outra coisa, fique à vontade para perguntar."
+        },
+        {
+          "role": "user",
+          "content": "qual os teLefones do ALunos todos do 1º ano  a?"
+        },
+        {
+          "role": "assistant",
+          "content": "Não encontrei os telefones dos alunos do 1º ano A pois não consegui encontrar a turma específica \"1º ANO A\" no sistema."
+        },
+        {
+          "role": "user",
+          "content": "e do 1 ano A?"
+        },
+        {
+          "role": "assistant",
+          "content": "Não foi possível encontrar os telefones dos alunos do 1º ano A, pois não consegui localizar essa turma específica no sistema. Se tiver mais informações ou precisar de ajuda com outra coisa, fique à vontade para perguntar."
+        },
+        {
+          "role": "user",
+          "content": "e do primeiro ANO A?"
+        },
+        {
+          "role": "assistant",
+          "content": "Estou com dificuldade de conexão. Tente novamente em instantes."
+        },
+        {
+          "role": "user",
+          "content": "Quem são os alunos alérgicos?"
+        },
+        {
+          "role": "assistant",
+          "content": "Os alunos alérgicos da escola são:\n\n1. Ana Guerra - 4º ANO A - ALERGIA A POEIRA\n2. Bernardo Cassiano - 5º ANO A - ALERGIA A PICADA DE INSETO\n3. Bernardo Farias - 5º ANO B - ALERGIA A LACTOSE\n4. Davi Machado - INFANTIL 5 B - ALERGIA A PÓLEN\n5. Enzo Rocha - 1º ANO B - ALERGIA A PICADA DE INSETO\n6. Felipe Novais - 4º ANO B - ALERGIA A PELOS DE ANIMAIS\n7. Gabriel Aragão - 2º ANO B - ALERGIA A AMENDOIM\n8. Isabela Alves - 4º ANO B - ALERGIA A POEIRA\n9. Isabela Cavalcanti - 2º ANO B - ALERGIA A PICADA DE INSETO\n10. João Mendes - 4º ANO A - ALERGIA A PÓLEN\n11. Larissa Pimenta - 1º ANO B - ALERGIA A AMENDOIM\n12. Marcos Costa - 4º ANO A - ALERGIA A PÓLEN\n13. Maria Gonçalves - INFANTIL 5 B - ALERGIA A PÓLEN\n14. Maria Ribeiro - 3º ANO A - ALERGIA A FRUTOS DO MAR\n15. Miguel Peixoto - 5º ANO A - ALERGIA A PELOS DE ANIMAIS\n16. Paulo Pacheco - 2º ANO B - ALERGIA A LACTOSE\n17. Renata Camargo - 3º ANO B - RINITE ALÉRGICA\n18. Rodrigo Das Neves - 2º ANO A - ALERGIA A PÓLEN\n19. Valentina Campos - INFANTIL 4 B - ALERGIA A DETERMINADOS MEDICAMENTOS\n\nEsses alunos precisam de atenção especial para evitar reações alérgicas."
+        },
+        {
+          "role": "user",
+          "content": "qual a grade horária do 5º ano A?"
+        },
+        {
+          "role": "assistant",
+          "content": "😅 Você atingiu o limite diário gratuito de uso da IA. Aguarde um pouco (geralmente libera em minutos) ou peça pra alguém aumentar o plano em console.groq.com/settings/billing."
+        }
+      ],
+      "titulo": "Nova Conversa"
+    }
+  },
+  "ativa": "20260807231156"
+}

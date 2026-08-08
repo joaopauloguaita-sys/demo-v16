@@ -1,0 +1,6 @@
+customtkinter
+fpdf2
+google-generativeai
+pillow
+python-dotenv
+bcrypt

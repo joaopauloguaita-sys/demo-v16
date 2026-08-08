@@ -1,0 +1,39 @@
+# Banco de dados (dados pessoais — nunca sobe para o GitHub)
+database/escola.db
+*.db
+*.db-shm
+*.db-wal
+
+# Credenciais (nunca sobe para o GitHub)
+.env
+credentials.json
+token.json
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.spec.bak
+
+# PyInstaller (gerado localmente, não vai para o GitHub)
+dist/
+build/
+*.egg
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
