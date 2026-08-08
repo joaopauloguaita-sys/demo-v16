@@ -9,6 +9,18 @@ Como usar em qualquer arquivo do projeto:
 """
 import os
 
+# Ponte com os "Secrets" do Streamlit Cloud: lá as chaves ficam em st.secrets,
+# não em variável de ambiente comum. Isso copia pra os.environ pra não
+# precisar mudar o resto do código, que já usa os.getenv() normalmente.
+# Se não estiver rodando no Streamlit Cloud (ex: local), simplesmente não
+# encontra nada e segue em frente sem erro.
+try:
+    import streamlit as st
+    for _k, _v in st.secrets.items():
+        os.environ.setdefault(_k, str(_v))
+except Exception:
+    pass
+
 try:
     from dotenv import load_dotenv
     _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
