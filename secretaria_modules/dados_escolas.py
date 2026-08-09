@@ -142,3 +142,14 @@ def filtrar_ativos(df):
     if "arquivado" in df.columns:
         filtro &= ~_verdadeiro(df["arquivado"])
     return df[filtro]
+
+
+def filtrar_alunos_matriculados(df):
+    """Igual filtrar_ativos, mas além disso exige que o aluno tenha
+    turma definida — evita contar registros incompletos, tipo uma
+    criança encaminhada da fila de espera cuja matrícula nunca foi
+    concluída (fica ativo=1 mas sem turma nenhuma)."""
+    df = filtrar_ativos(df)
+    if df.empty or "turma_id" not in df.columns:
+        return df
+    return df[df["turma_id"].notna() & (df["turma_id"].astype(str).str.strip() != "")]

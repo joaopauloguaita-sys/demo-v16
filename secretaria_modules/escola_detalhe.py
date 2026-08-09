@@ -12,7 +12,7 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 from fpdf import FPDF
-from secretaria_modules.dados_escolas import listar_escolas, buscar_tabela_de_uma_escola, link_whatsapp, filtrar_ativos
+from secretaria_modules.dados_escolas import listar_escolas, buscar_tabela_de_uma_escola, link_whatsapp, filtrar_ativos, filtrar_alunos_matriculados
 
 MAX_ESCOLAS = 10
 
@@ -93,7 +93,7 @@ def _sub_dashboard(escola_id):
     df_pedagogas = buscar_tabela_de_uma_escola(escola_id, "pedagogas", "id,nome,ativo,arquivado")
 
     if not df_alunos.empty:
-        df_alunos_ativos = filtrar_ativos(df_alunos)
+        df_alunos_ativos = filtrar_alunos_matriculados(df_alunos)
     else:
         df_alunos_ativos = df_alunos
 
@@ -141,7 +141,7 @@ def _sub_dashboard(escola_id):
     """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    return df_alunos
+    return df_alunos_ativos
 
 
 def _botao_necessidades_especiais(escola_id, df_alunos):
@@ -259,7 +259,7 @@ def _botao_medidas(escola_id, nome_escola):
         df_alunos = buscar_tabela_de_uma_escola(escola_id, "alunos", "id,nome,turma_id,ativo,arquivado")
         df_turmas = buscar_tabela_de_uma_escola(escola_id, "turmas", "id,nome_completo")
 
-        df_alunos = filtrar_ativos(df_alunos)
+        df_alunos = filtrar_alunos_matriculados(df_alunos)
 
         combinado = df_med.merge(df_alunos, left_on="aluno_id", right_on="id", how="inner")
         if not df_turmas.empty:

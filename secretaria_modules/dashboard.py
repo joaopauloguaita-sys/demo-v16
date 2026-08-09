@@ -5,7 +5,7 @@ tabela de comparação escola por escola.
 """
 import streamlit as st
 import pandas as pd
-from secretaria_modules.dados_escolas import carregar_tabela_combinada, listar_escolas, filtrar_ativos
+from secretaria_modules.dados_escolas import carregar_tabela_combinada, listar_escolas, filtrar_alunos_matriculados
 
 
 def _metric(valor, rotulo):
@@ -26,12 +26,12 @@ def render():
                    "Cadastre cada escola no formato [escola_1], [escola_2], etc.")
         return
 
-    df_alunos, escolas_com_erro = carregar_tabela_combinada("alunos", "id,nome,sexo,ativo,arquivado")
+    df_alunos, escolas_com_erro = carregar_tabela_combinada("alunos", "id,nome,sexo,ativo,arquivado,turma_id")
     df_professores, _ = carregar_tabela_combinada("professores", "id,ativo,arquivado")
     df_turmas, _ = carregar_tabela_combinada("turmas", "id,ativo")
 
     if not df_alunos.empty:
-        df_alunos = filtrar_ativos(df_alunos)
+        df_alunos = filtrar_alunos_matriculados(df_alunos)
 
     total_alunos = len(df_alunos)
     total_professores = len(df_professores) if not df_professores.empty else 0
