@@ -70,9 +70,13 @@ if not df_alunos.empty:
     if not df_turmas.empty:
         # Criamos um dicionário que liga o ID da turma ao Nome Completo dela
         mapa_turmas = dict(zip(df_turmas['id'].astype(str), df_turmas['nome_completo']))
-        
+
         # Agora aplicamos esse nome aos alunos usando a coluna 'turma_id'
-        df_alunos['turma_nome_exibicao'] = df_alunos['turma_id'].astype(str).str.strip().map(mapa_turmas).fillna("Sem Turma")
+        # (remove o ".0" que o Pandas adiciona quando a coluna tem algum
+        # aluno sem turma misturado com números, senão "38" vira "38.0"
+        # e nunca bate com o id da tabela de turmas)
+        turma_id_limpo = df_alunos['turma_id'].astype(str).str.strip().str.replace(r'\.0$', '', regex=True)
+        df_alunos['turma_nome_exibicao'] = turma_id_limpo.map(mapa_turmas).fillna("Sem Turma")
     else:
         df_alunos['turma_nome_exibicao'] = "Sem Turma"
 
