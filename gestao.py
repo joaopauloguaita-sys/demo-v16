@@ -656,8 +656,13 @@ elif menu == "🏢 Dados da Escola":
             st.markdown('</div>', unsafe_allow_html=True)
             st.write("")
 
-        # Qualquer coluna que não caiu em nenhum grupo acima
-        restantes = [k for k in d.keys() if k not in usados and k != 'id' and campo_valido(d[k])]
+        # Qualquer coluna que não caiu em nenhum grupo acima — exceto campos
+        # binários/sensíveis (base64 de arquivos, chave de API), que nunca
+        # devem ser jogados na tela como texto cru.
+        CAMPOS_OCULTOS = ["base64", "api_key", "apikey", "senha", "password", "token"]
+        restantes = [k for k in d.keys()
+                     if k not in usados and k != 'id' and campo_valido(d[k])
+                     and not any(oculto in k.lower() for oculto in CAMPOS_OCULTOS)]
         if restantes:
             st.markdown('<div class="section-title">📋 Outras Informações</div>', unsafe_allow_html=True)
             st.markdown('<div class="panel">', unsafe_allow_html=True)
