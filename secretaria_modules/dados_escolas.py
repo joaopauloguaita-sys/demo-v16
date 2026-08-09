@@ -121,3 +121,24 @@ def link_whatsapp(telefone):
     if len(numeros) <= 11:
         numeros = "55" + numeros
     return f"https://wa.me/{numeros}"
+
+
+def _verdadeiro(serie):
+    """Reconhece 'verdadeiro' em qualquer formato que o banco possa mandar
+    (1, 1.0, True, true, t, yes, sim...), pra nunca deixar passar um
+    arquivado por engano só por causa do formato do dado."""
+    return serie.astype(str).str.strip().str.lower().isin(["1", "1.0", "true", "t", "yes", "sim"])
+
+
+def filtrar_ativos(df):
+    """Filtra só os registros ativos e NÃO arquivados. Se as colunas
+    'ativo'/'arquivado' não existirem, não filtra por elas (assume que
+    já vieram só os que interessam)."""
+    if df.empty:
+        return df
+    filtro = pd.Series(True, index=df.index)
+    if "ativo" in df.columns:
+        filtro &= _verdadeiro(df["ativo"])
+    if "arquivado" in df.columns:
+        filtro &= ~_verdadeiro(df["arquivado"])
+    return df[filtro]

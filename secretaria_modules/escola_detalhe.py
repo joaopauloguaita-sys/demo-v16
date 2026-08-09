@@ -12,7 +12,7 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 from fpdf import FPDF
-from secretaria_modules.dados_escolas import listar_escolas, buscar_tabela_de_uma_escola, link_whatsapp
+from secretaria_modules.dados_escolas import listar_escolas, buscar_tabela_de_uma_escola, link_whatsapp, filtrar_ativos
 
 MAX_ESCOLAS = 10
 
@@ -93,24 +93,16 @@ def _sub_dashboard(escola_id):
     df_pedagogas = buscar_tabela_de_uma_escola(escola_id, "pedagogas", "id,nome,ativo,arquivado")
 
     if not df_alunos.empty:
-        df_alunos_ativos = df_alunos[
-            (df_alunos["ativo"].astype(str).isin(["1", "True", "1.0"])) &
-            (~df_alunos["arquivado"].astype(str).isin(["1", "True", "1.0"]))]
+        df_alunos_ativos = filtrar_ativos(df_alunos)
     else:
         df_alunos_ativos = df_alunos
 
     meninos = len(df_alunos_ativos[df_alunos_ativos.get("sexo", "") == "Masculino"]) if not df_alunos_ativos.empty else 0
     meninas = len(df_alunos_ativos[df_alunos_ativos.get("sexo", "") == "Feminino"]) if not df_alunos_ativos.empty else 0
 
-    def _ativos(df):
-        if df.empty:
-            return df
-        return df[(df["ativo"].astype(str).isin(["1", "True", "1.0"])) &
-                  (~df.get("arquivado", pd.Series(dtype=str)).astype(str).isin(["1", "True", "1.0"]))]
-
-    n_professores = len(_ativos(df_professores))
-    n_funcionarios = len(_ativos(df_funcionarios))
-    n_turmas = len(df_turmas[df_turmas["ativo"].astype(str).isin(["1", "True", "1.0"])]) if not df_turmas.empty else 0
+    n_professores = len(filtrar_ativos(df_professores))
+    n_funcionarios = len(filtrar_ativos(df_funcionarios))
+    n_turmas = len(filtrar_ativos(df_turmas))
 
     try:
         n_informatica = len(buscar_tabela_de_uma_escola(escola_id, "curso_informatica", "id"))
@@ -125,8 +117,8 @@ def _sub_dashboard(escola_id):
     except Exception:
         n_fila = 0
 
-    nomes_diretores = ", ".join(_ativos(df_diretores)["nome"].tolist()) if not df_diretores.empty else "—"
-    nomes_pedagogas = ", ".join(_ativos(df_pedagogas)["nome"].tolist()) if not df_pedagogas.empty else "—"
+    nomes_diretores = ", ".join(filtrar_ativos(df_diretores)["nome"].tolist()) if not df_diretores.empty else "—"
+    nomes_pedagogas = ", ".join(filtrar_ativos(df_pedagogas)["nome"].tolist()) if not df_pedagogas.empty else "—"
 
     st.markdown('<div class="painel">', unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3, gap="medium")
@@ -193,8 +185,7 @@ def _botao_professores(escola_id):
         if df.empty:
             st.info("Nenhum professor encontrado.")
             return
-        df = df[(df["ativo"].astype(str).isin(["1", "True", "1.0"])) &
-               (~df["arquivado"].astype(str).isin(["1", "True", "1.0"]))]
+        df = filtrar_ativos(df)
         tabela = df[["nome", "cargo", "situacao_funcional", "telefone1", "pasta_documentos"]]
         _tabela_com_links(
             tabela,
@@ -218,8 +209,7 @@ def _botao_gestao_equipe(escola_id):
             if df.empty:
                 st.caption("Nenhum registro.")
                 continue
-            df = df[(df["ativo"].astype(str).isin(["1", "True", "1.0"])) &
-                   (~df["arquivado"].astype(str).isin(["1", "True", "1.0"]))]
+            df = filtrar_ativos(df)
             tabela = df[["nome", "cargo", "situacao_funcional", "telefone1", "pasta_documentos"]]
             _tabela_com_links(
                 tabela,
@@ -269,8 +259,7 @@ def _botao_medidas(escola_id, nome_escola):
         df_alunos = buscar_tabela_de_uma_escola(escola_id, "alunos", "id,nome,turma_id,ativo,arquivado")
         df_turmas = buscar_tabela_de_uma_escola(escola_id, "turmas", "id,nome_completo")
 
-        df_alunos = df_alunos[(df_alunos["ativo"].astype(str).isin(["1", "True", "1.0"])) &
-                              (~df_alunos["arquivado"].astype(str).isin(["1", "True", "1.0"]))]
+        df_alunos = filtrar_ativos(df_alunos)
 
         combinado = df_med.merge(df_alunos, left_on="aluno_id", right_on="id", how="inner")
         if not df_turmas.empty:
