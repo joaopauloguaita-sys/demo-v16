@@ -10,9 +10,48 @@ embaixo — o resto se ajusta sozinho.
 """
 import streamlit as st
 import pandas as pd
+from datetime import date
+from fpdf import FPDF
 from secretaria_modules.dados_escolas import listar_escolas, buscar_tabela_de_uma_escola, link_whatsapp
 
 MAX_ESCOLAS = 10
+
+
+def _texto_pdf(txt):
+    """Garante que acentos não quebrem o PDF (fonte padrão só suporta latin-1)."""
+    return str(txt).encode("latin-1", "replace").decode("latin-1")
+
+
+def _gerar_pdf_tabela(titulo, nome_escola, cabecalhos, linhas):
+    """Monta um PDF simples de tabela, pronto pra imprimir."""
+    paisagem = len(cabecalhos) > 4
+    pdf = FPDF(orientation="L" if paisagem else "P", unit="mm", format="A4")
+    pdf.add_page()
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.cell(0, 9, _texto_pdf(titulo), ln=True, align="C")
+    pdf.set_font("Helvetica", "", 10)
+    pdf.cell(0, 7, _texto_pdf(nome_escola), ln=True, align="C")
+    pdf.set_font("Helvetica", "", 9)
+    pdf.cell(0, 6, f"Gerado em {date.today().strftime('%d/%m/%Y')}", ln=True, align="C")
+    pdf.ln(4)
+
+    largura_pagina = pdf.w - 20
+    largura_col = largura_pagina / len(cabecalhos)
+    pdf.set_font("Helvetica", "B", 9)
+    pdf.set_fill_color(30, 40, 90)
+    pdf.set_text_color(255, 255, 255)
+    for c in cabecalhos:
+        pdf.cell(largura_col, 8, _texto_pdf(c), border=1, fill=True, align="C")
+    pdf.ln()
+    pdf.set_font("Helvetica", "", 8)
+    pdf.set_text_color(0, 0, 0)
+    for i, linha in enumerate(linhas):
+        pdf.set_fill_color(240, 240, 248) if i % 2 == 0 else pdf.set_fill_color(255, 255, 255)
+        for valor in linha:
+            pdf.cell(largura_col, 7, _texto_pdf(valor), border=1, fill=True)
+        pdf.ln()
+
+    return bytes(pdf.output())
 
 
 def _metric(valor, rotulo):
@@ -189,6 +228,72 @@ def _botao_gestao_equipe(escola_id):
                 col_pasta="pasta_documentos")
 
 
+def _botao_estoque_baixo(escola_id, nome_escola):
+    with st.expander("📦 Materiais Abaixo do Estoque Mínimo"):
+        df = buscar_tabela_de_uma_escola(escola_id, "estoque_itens",
+            "nome,quantidade,estoque_minimo,unidade,excluido")
+        if df.empty:
+            st.info("Nenhum item de estoque cadastrado.")
+            return
+        if "excluido" in df.columns:
+            df = df[~df["excluido"].astype(str).isin(["1", "True", "1.0"])]
+        df["quantidade"] = pd.to_numeric(df["quantidade"], errors="coerce").fillna(0)
+        df["estoque_minimo"] = pd.to_numeric(df["estoque_minimo"], errors="coerce").fillna(0)
+        baixo = df[df["quantidade"] < df["estoque_minimo"]].copy()
+        if baixo.empty:
+            st.success("Nenhum item abaixo do estoque mínimo no momento. ✅")
+            return
+        baixo["Falta"] = (baixo["estoque_minimo"] - baixo["quantidade"]).astype(int)
+        tabela = baixo.rename(columns={
+            "nome": "Item", "quantidade": "Estoque Atual",
+            "estoque_minimo": "Estoque Mínimo", "unidade": "Unidade"})
+        st.dataframe(tabela[["Item", "Estoque Atual", "Estoque Mínimo", "Falta", "Unidade"]],
+                     use_container_width=True, hide_index=True)
+
+        linhas_pdf = [[r["Item"], r["Estoque Atual"], r["Estoque Mínimo"], r["Falta"], r["Unidade"]]
+                     for _, r in tabela.iterrows()]
+        pdf_bytes = _gerar_pdf_tabela("Materiais Abaixo do Estoque Mínimo", nome_escola,
+                                      ["Item", "Estoque Atual", "Estoque Mínimo", "Falta", "Unidade"], linhas_pdf)
+        st.download_button("📄 Gerar PDF pra Imprimir", data=pdf_bytes,
+                           file_name=f"estoque_baixo_{escola_id}.pdf", mime="application/pdf",
+                           key=f"pdf_estoque_{escola_id}")
+
+
+def _botao_medidas(escola_id, nome_escola):
+    with st.expander("📏 Medidas Individuais dos Alunos"):
+        df_med = buscar_tabela_de_uma_escola(escola_id, "registro_tamanhos",
+            "aluno_id,calcado,calca_saia,camiseta,blusa")
+        if df_med.empty:
+            st.info("Nenhuma medida cadastrada ainda.")
+            return
+        df_alunos = buscar_tabela_de_uma_escola(escola_id, "alunos", "id,nome,turma_id,ativo,arquivado")
+        df_turmas = buscar_tabela_de_uma_escola(escola_id, "turmas", "id,nome_completo")
+
+        df_alunos = df_alunos[(df_alunos["ativo"].astype(str).isin(["1", "True", "1.0"])) &
+                              (~df_alunos["arquivado"].astype(str).isin(["1", "True", "1.0"]))]
+
+        combinado = df_med.merge(df_alunos, left_on="aluno_id", right_on="id", how="inner")
+        if not df_turmas.empty:
+            mapa = dict(zip(df_turmas["id"].astype(str), df_turmas["nome_completo"]))
+            combinado["turma_id_str"] = combinado["turma_id"].astype(str).str.replace(r"\.0$", "", regex=True)
+            combinado["Turma"] = combinado["turma_id_str"].map(mapa).fillna("Sem Turma")
+        else:
+            combinado["Turma"] = "Sem Turma"
+
+        combinado = combinado.sort_values(["Turma", "nome"])
+        tabela = combinado.rename(columns={
+            "nome": "Nome", "calcado": "Calçado", "calca_saia": "Calça/Saia",
+            "camiseta": "Camiseta", "blusa": "Blusa"})
+        colunas_finais = ["Turma", "Nome", "Calçado", "Calça/Saia", "Camiseta", "Blusa"]
+        st.dataframe(tabela[colunas_finais], use_container_width=True, hide_index=True)
+
+        linhas_pdf = [[r[c] for c in colunas_finais] for _, r in tabela.iterrows()]
+        pdf_bytes = _gerar_pdf_tabela("Medidas Individuais dos Alunos", nome_escola, colunas_finais, linhas_pdf)
+        st.download_button("📄 Gerar PDF pra Imprimir", data=pdf_bytes,
+                           file_name=f"medidas_{escola_id}.pdf", mime="application/pdf",
+                           key=f"pdf_medidas_{escola_id}")
+
+
 def _botao_dados_escola(escola_id):
     with st.expander("🏢 Dados da Escola"):
         df = buscar_tabela_de_uma_escola(escola_id, "dados_escola", "*")
@@ -235,4 +340,6 @@ def render():
             _botao_necessidades_especiais(escola_id, df_alunos)
             _botao_professores(escola_id)
             _botao_gestao_equipe(escola_id)
+            _botao_estoque_baixo(escola_id, rotulo)
+            _botao_medidas(escola_id, rotulo)
             _botao_dados_escola(escola_id)
