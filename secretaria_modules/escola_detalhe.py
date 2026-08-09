@@ -90,17 +90,17 @@ def _sub_dashboard(escola_id):
     nomes_pedagogas = ", ".join(_ativos(df_pedagogas)["nome"].tolist()) if not df_pedagogas.empty else "—"
 
     st.markdown('<div class="painel">', unsafe_allow_html=True)
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3 = st.columns(3, gap="medium")
     with c1: _metric(len(df_alunos_ativos), "Alunos ativos")
     with c2: _metric(meninos, "Meninos")
     with c3: _metric(meninas, "Meninas")
+    c4, c5, c6 = st.columns(3, gap="medium")
     with c4: _metric(n_turmas, "Turmas")
-    c5, c6, c7, c8 = st.columns(4)
     with c5: _metric(n_professores, "Professores")
     with c6: _metric(n_funcionarios, "Funcionários")
+    c7, c8, c9 = st.columns(3, gap="medium")
     with c7: _metric(n_informatica, "Alunos — Informática")
     with c8: _metric(n_xadrez, "Alunos — Xadrez")
-    c9, _, _, _ = st.columns(4)
     with c9: _metric(n_fila, "Fila de Espera")
     st.markdown(f"""
         <div style="margin-top:15px; color:#c9cfe8;">
@@ -150,16 +150,17 @@ def _botao_necessidades_especiais(escola_id, df_alunos):
 def _botao_professores(escola_id):
     with st.expander("👨‍🏫 Professores"):
         df = buscar_tabela_de_uma_escola(escola_id, "professores",
-            "id,nome,cargo,telefone1,pasta_documentos,ativo,arquivado")
+            "id,nome,cargo,situacao_funcional,telefone1,pasta_documentos,ativo,arquivado")
         if df.empty:
             st.info("Nenhum professor encontrado.")
             return
         df = df[(df["ativo"].astype(str).isin(["1", "True", "1.0"])) &
                (~df["arquivado"].astype(str).isin(["1", "True", "1.0"]))]
-        tabela = df[["nome", "cargo", "telefone1", "pasta_documentos"]]
+        tabela = df[["nome", "cargo", "situacao_funcional", "telefone1", "pasta_documentos"]]
         _tabela_com_links(
             tabela,
-            colunas_map={"nome": "Nome", "cargo": "Cargo", "telefone1": "Telefone", "pasta_documentos": "Pasta"},
+            colunas_map={"nome": "Nome", "cargo": "Cargo", "situacao_funcional": "Situação Funcional",
+                        "telefone1": "Telefone", "pasta_documentos": "Pasta"},
             col_pasta="pasta_documentos")
 
 
@@ -174,16 +175,17 @@ def _botao_gestao_equipe(escola_id):
         for tabela_nome, titulo in categorias:
             st.markdown(f"**{titulo}**")
             df = buscar_tabela_de_uma_escola(escola_id, tabela_nome,
-                "id,nome,cargo,telefone1,pasta_documentos,ativo,arquivado")
+                "id,nome,cargo,situacao_funcional,telefone1,pasta_documentos,ativo,arquivado")
             if df.empty:
                 st.caption("Nenhum registro.")
                 continue
             df = df[(df["ativo"].astype(str).isin(["1", "True", "1.0"])) &
                    (~df["arquivado"].astype(str).isin(["1", "True", "1.0"]))]
-            tabela = df[["nome", "cargo", "telefone1", "pasta_documentos"]]
+            tabela = df[["nome", "cargo", "situacao_funcional", "telefone1", "pasta_documentos"]]
             _tabela_com_links(
                 tabela,
-                colunas_map={"nome": "Nome", "cargo": "Cargo", "telefone1": "Telefone", "pasta_documentos": "Pasta"},
+                colunas_map={"nome": "Nome", "cargo": "Cargo", "situacao_funcional": "Situação Funcional",
+                            "telefone1": "Telefone", "pasta_documentos": "Pasta"},
                 col_pasta="pasta_documentos")
 
 
