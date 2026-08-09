@@ -1,4 +1,5 @@
 import sys, os
+from PIL import Image
 
 from logger_config import get_logger
 logger = get_logger(__name__)
@@ -144,6 +145,8 @@ MENU_ITENS = [
     ("usuarios",         "👥",  "Usuários do Sistema",   PERFIS_ADMIN),
     ("base_conhecimento", "🔐", "Base de Conhecimento",  PERFIS_ADMIN),
     ("importacao_sere",  "📥",  "Importar do SERE",       PERFIS_ADMIN),
+    ("---9",             "",    "─────────────────",      None),
+    ("sobre",            "☎️",  "Contato, Vendas e Suporte", None),
 ]
 
 
@@ -470,6 +473,8 @@ class MainApp(ctk.CTk):
         elif nome == "importacao_sere":
             from modules.importacao_sere import ImportacaoSereModule
             ImportacaoSereModule(self.main_frame).pack(fill="both", expand=True)
+        elif nome == "sobre":
+            self._tela_sobre()
         elif nome == "certificado_conclusao":
             from modules.certificado_conclusao import CertificadoConclusaoModule
             CertificadoConclusaoModule(self.main_frame).pack(fill="both", expand=True)
@@ -706,6 +711,42 @@ class MainApp(ctk.CTk):
             self.main_frame, tabela, titulo, icone,
             campo_nome="nome", form_callback=callback
         ).pack(fill="both", expand=True)
+
+    def _tela_sobre(self):
+        frame = ctk.CTkFrame(self.main_frame, fg_color=CORES["fundo"])
+        frame.pack(fill="both", expand=True)
+
+        card = ctk.CTkFrame(frame, fg_color=CORES["card"], corner_radius=16)
+        card.pack(padx=60, pady=50, fill="both", expand=True)
+
+        try:
+            logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "logo.png")
+            img = ctk.CTkImage(Image.open(logo_path), size=(110, 110))
+            ctk.CTkLabel(card, image=img, text="").pack(pady=(40, 10))
+        except Exception:
+            ctk.CTkLabel(card, text="🏫", font=fonte(60)).pack(pady=(40, 10))
+
+        ctk.CTkLabel(card, text=_nome_escola_atual(), font=fonte(20, "bold"),
+                     text_color=CORES["dourado"]).pack(pady=(0, 4))
+        ctk.CTkLabel(card, text="João - Secretário Escolar", font=fonte(16, "bold"),
+                     text_color=CORES["subtexto"]).pack(pady=(0, 20))
+
+        ctk.CTkLabel(card,
+            text="Sistema de gestão escolar desenvolvido sob medida, cobrindo cadastro de\n"
+                 "alunos e equipe, turmas e horários, notas e frequência, documentos oficiais,\n"
+                 "controle de materiais e patrimônio, comunicação com a comunidade escolar e\n"
+                 "muito mais — feito para facilitar o dia a dia da secretaria.",
+            font=fonte(12), text_color=CORES["texto"], justify="center").pack(pady=(0, 25))
+
+        ctk.CTkLabel(card, text="☎️ Contato, Vendas e Suporte", font=fonte(13, "bold"),
+                     text_color=CORES["dourado"]).pack(pady=(5, 8))
+        ctk.CTkLabel(card, text="✉  joao.secretarioescolar@gmail.com", font=fonte(12),
+                     text_color=CORES["texto"]).pack(pady=2)
+        ctk.CTkLabel(card, text="📱  (43) 99908-9871   •   (43) 99936-1415", font=fonte(12),
+                     text_color=CORES["texto"]).pack(pady=(2, 25))
+
+        ctk.CTkLabel(card, text="Desenvolvido por João Paulo A. Guaita  •  Licença de uso cedida gratuitamente",
+                     font=fonte(11), text_color=CORES["subtexto"]).pack(pady=(0, 30))
 
     def _arq_morto_equipe(self):
         from modules.arquivo_morto_equipe import ArquivoMortoEquipeModule

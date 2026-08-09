@@ -434,7 +434,7 @@ except Exception:
     pass
 st.sidebar.markdown("### 🛡️ João - Secretário Escolar - Gestão")
 menu = st.sidebar.radio("Menu Principal", [
-    "📊 Dashboard", "👥 Alunos", "🏫 Turmas & Vagas", "👨‍🏫 Professores", "🧑‍💼 Funcionários", "🏢 Dados da Escola"
+    "📊 Dashboard", "👥 Alunos", "🏫 Turmas & Vagas", "👨‍🏫 Professores", "🧑‍💼 Funcionários", "🏢 Dados da Escola", "☎️ Contato, Vendas e Suporte"
 ], label_visibility="collapsed")
 
 st.sidebar.markdown("---")
@@ -673,6 +673,30 @@ elif menu == "🏢 Dados da Escola":
             st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info("Dados da escola não cadastrados.")
+
+elif menu == "☎️ Contato, Vendas e Suporte":
+    st.markdown('<div class="section-title">☎️ Contato, Vendas e Suporte</div>', unsafe_allow_html=True)
+    st.markdown('<div class="panel" style="text-align:center; padding:30px;">', unsafe_allow_html=True)
+    try:
+        st.image("assets/logo.png", width=110)
+    except Exception:
+        st.markdown("### 🏫")
+    st.markdown(f"""
+        <div class="school-name" style="margin-top:10px;">{nome_escola}</div>
+        <div style="font-weight:600; color:#6c7aa8; margin-bottom:15px;">João - Secretário Escolar — Painel de Gestão</div>
+        <p style="max-width:600px; margin:0 auto 20px auto; color:#444;">
+            Sistema de gestão escolar desenvolvido sob medida, cobrindo cadastro de alunos e equipe,
+            turmas e horários, notas e frequência, documentos oficiais, controle de materiais e
+            patrimônio, comunicação com a comunidade escolar e muito mais.
+        </p>
+        <div style="font-weight:700; color:#2e3a8c; margin-bottom:8px;">☎️ Contato, Vendas e Suporte</div>
+        <div>✉️ joao.secretarioescolar@gmail.com</div>
+        <div>📱 (43) 99908-9871 &nbsp;•&nbsp; (43) 99936-1415</div>
+        <div style="margin-top:20px; font-size:12px; color:#888;">
+            Desenvolvido por João Paulo A. Guaita &nbsp;•&nbsp; Licença de uso cedida gratuitamente
+        </div>
+    """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # =========================================================
 # RODAPÉ (aparece em todas as abas)

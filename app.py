@@ -16,6 +16,21 @@ try:
 except:
     pass
 
+# --- SOBRE ---
+with st.sidebar.expander("☎️ Contato, Vendas e Suporte"):
+    st.markdown("""
+**João - Secretário Escolar**
+
+Sistema de gestão escolar com painel de acompanhamento em tempo real
+pra equipe de inspetores/portaria.
+
+📞 **Contato, Vendas e Suporte**
+✉️ joao.secretarioescolar@gmail.com
+📱 (43) 99908-9871 • (43) 99936-1415
+
+*Desenvolvido por João Paulo A. Guaita*
+""")
+
 # --- DESIGN (CSS) ---
 st.markdown("""
     <style>
