@@ -118,10 +118,15 @@ def _botao_necessidades_especiais(escola_id, df_alunos):
         if df_alunos.empty:
             st.info("Nenhum aluno encontrado.")
             return
-        alvo = df_alunos[
-            (df_alunos.get("tipos_deficiencia", "").astype(str).str.strip().replace("nan", "") != "") |
-            (df_alunos.get("necessidades_especiais", "").astype(str).str.strip().replace("nan", "") != "")
-        ].copy()
+
+        def _coluna_texto(df, nome):
+            if nome in df.columns:
+                return df[nome].fillna("").astype(str).str.strip()
+            return pd.Series([""] * len(df), index=df.index)
+
+        col_def = _coluna_texto(df_alunos, "tipos_deficiencia")
+        col_nec = _coluna_texto(df_alunos, "necessidades_especiais")
+        alvo = df_alunos[(col_def != "") | (col_nec != "")].copy()
         if alvo.empty:
             st.info("Nenhum aluno com necessidades especiais registradas.")
             return
