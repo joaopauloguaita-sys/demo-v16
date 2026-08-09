@@ -1,0 +1,96 @@
+"""
+Fonte central de dados do app da Secretaria de Educação.
+
+Cada escola tem seu PRÓPRIO Supabase (mesmo esquema de tabelas do sistema
+"João - Secretário Escolar"). Esse arquivo:
+
+  1) Lê a lista de escolas cadastradas (nome + credenciais) dos Secrets
+     do Streamlit Cloud.
+  2) Sabe buscar uma tabela (ex: "alunos") de TODAS as escolas de uma vez,
+     em paralelo, e devolver tudo já combinado num único DataFrame, com
+     uma coluna "escola" dizendo de onde veio cada linha.
+
+Pra adicionar/remover uma escola: só mexe nos Secrets, não precisa
+mexer em nenhum código.
+"""
+import concurrent.futures
+import streamlit as st
+import pandas as pd
+import requests
+
+
+def listar_escolas():
+    """
+    Lê a lista de escolas dos Secrets. Espera um formato assim no
+    secrets.toml do Streamlit Cloud:
+
+        [escola_1]
+        nome = "Escola Municipal Trá Lá Lá"
+        url = "https://xxxxx.supabase.co"
+        key = "chave-anon-aqui"
+
+        [escola_2]
+        nome = "Escola Municipal Outra"
+        url = "https://yyyyy.supabase.co"
+        key = "chave-anon-aqui"
+
+    (repete um bloco [escola_N] pra cada escola — N não precisa ser
+    sequencial nem ter limite)
+    """
+    escolas = []
+    for chave in st.secrets.keys():
+        if chave.startswith("escola_"):
+            bloco = st.secrets[chave]
+            if "url" in bloco and "key" in bloco:
+                escolas.append({
+                    "id": chave,
+                    "nome": bloco.get("nome", chave),
+                    "url": bloco["url"],
+                    "key": bloco["key"],
+                })
+    return escolas
+
+
+def _buscar_tabela_uma_escola(escola, tabela, select="*"):
+    """Busca uma tabela de UMA escola só. Nunca derruba o app inteiro se
+    uma escola estiver fora do ar — só devolve vazio pra ela."""
+    try:
+        headers = {"apikey": escola["key"], "Authorization": f"Bearer {escola['key']}"}
+        resp = requests.get(f"{escola['url']}/rest/v1/{tabela}?select={select}",
+                             headers=headers, timeout=15)
+        dados = resp.json()
+        if not isinstance(dados, list):
+            return escola["nome"], pd.DataFrame()
+        df = pd.DataFrame(dados)
+        df["escola"] = escola["nome"]
+        return escola["nome"], df
+    except Exception:
+        return escola["nome"], pd.DataFrame()
+
+
+@st.cache_data(ttl=120)
+def carregar_tabela_combinada(tabela, select="*"):
+    """
+    Busca a mesma tabela em TODAS as escolas cadastradas, em paralelo, e
+    devolve tudo junto num DataFrame só (com a coluna "escola" marcando
+    a origem de cada linha). Escolas fora do ar simplesmente não entram,
+    sem travar as outras.
+    """
+    escolas = listar_escolas()
+    if not escolas:
+        return pd.DataFrame(), []
+
+    resultados = []
+    escolas_com_erro = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        tarefas = {executor.submit(_buscar_tabela_uma_escola, e, tabela, select): e for e in escolas}
+        for tarefa in concurrent.futures.as_completed(tarefas):
+            nome, df = tarefa.result()
+            if df.empty:
+                escolas_com_erro.append(nome)
+            else:
+                resultados.append(df)
+
+    if not resultados:
+        return pd.DataFrame(), escolas_com_erro
+    return pd.concat(resultados, ignore_index=True), escolas_com_erro

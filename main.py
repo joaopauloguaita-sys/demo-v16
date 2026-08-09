@@ -742,7 +742,7 @@ class MainApp(ctk.CTk):
                      text_color=CORES["dourado"]).pack(pady=(5, 8))
         ctk.CTkLabel(card, text="✉  joao.secretarioescolar@gmail.com", font=fonte(12),
                      text_color=CORES["texto"]).pack(pady=2)
-        ctk.CTkLabel(card, text="📱  (43) 99908-9871   •   (43) 99936-1415", font=fonte(12),
+        ctk.CTkLabel(card, text="📱  (43) 99908-9871   •   (43) 99937-1415", font=fonte(12),
                      text_color=CORES["texto"]).pack(pady=(2, 25))
 
         ctk.CTkLabel(card, text="Desenvolvido por João Paulo A. Guaita  •  Licença de uso cedida gratuitamente",
