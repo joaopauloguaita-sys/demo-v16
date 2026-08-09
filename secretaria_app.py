@@ -55,9 +55,9 @@ st.markdown("""
 # =========================================================
 MODULOS = [
     ("📊 Dashboard Geral", "secretaria_modules.dashboard"),
-    # ("🏫 Turmas & Vagas",   "secretaria_modules.turmas_vagas"),
+    ("🏫 Escola por Escola", "secretaria_modules.escola_detalhe"),
     # ("📈 Notas & Frequência", "secretaria_modules.notas_frequencia"),
-    # ("👨‍🏫 Corpo Docente",   "secretaria_modules.professores"),
+    ("☎️ Contato, Vendas e Suporte", "secretaria_modules.sobre"),
 ]
 
 # =========================================================

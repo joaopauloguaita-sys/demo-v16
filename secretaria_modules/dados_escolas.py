@@ -9,6 +9,8 @@ Cada escola tem seu PRÓPRIO Supabase (mesmo esquema de tabelas do sistema
   2) Sabe buscar uma tabela (ex: "alunos") de TODAS as escolas de uma vez,
      em paralelo, e devolver tudo já combinado num único DataFrame, com
      uma coluna "escola" dizendo de onde veio cada linha.
+  3) Também sabe buscar dados de UMA escola só (pro painel Escola por
+     Escola, que mostra cada uma separadamente).
 
 Pra adicionar/remover uma escola: só mexe nos Secrets, não precisa
 mexer em nenhum código.
@@ -94,3 +96,28 @@ def carregar_tabela_combinada(tabela, select="*"):
     if not resultados:
         return pd.DataFrame(), escolas_com_erro
     return pd.concat(resultados, ignore_index=True), escolas_com_erro
+
+
+@st.cache_data(ttl=120)
+def buscar_tabela_de_uma_escola(escola_id, tabela, select="*"):
+    """Busca uma tabela de UMA escola específica (identificada pelo id,
+    tipo 'escola_1'). Usado pelo painel Escola por Escola, onde cada aba
+    mostra só os dados daquela escola."""
+    escolas = {e["id"]: e for e in listar_escolas()}
+    escola = escolas.get(escola_id)
+    if not escola:
+        return pd.DataFrame()
+    _, df = _buscar_tabela_uma_escola(escola, tabela, select)
+    return df
+
+
+def link_whatsapp(telefone):
+    """Monta o link do WhatsApp a partir de um telefone salvo no banco."""
+    if not telefone:
+        return None
+    numeros = "".join(c for c in str(telefone) if c.isdigit())
+    if not numeros:
+        return None
+    if len(numeros) <= 11:
+        numeros = "55" + numeros
+    return f"https://wa.me/{numeros}"
