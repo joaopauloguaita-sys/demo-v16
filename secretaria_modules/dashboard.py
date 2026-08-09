@@ -26,9 +26,9 @@ def render():
                    "Cadastre cada escola no formato [escola_1], [escola_2], etc.")
         return
 
-    df_alunos, escolas_com_erro = carregar_tabela_combinada("alunos", "id,nome,sexo,ativo,arquivado,escola")
-    df_professores, _ = carregar_tabela_combinada("professores", "id,ativo,arquivado,escola")
-    df_turmas, _ = carregar_tabela_combinada("turmas", "id,ativo,escola")
+    df_alunos, escolas_com_erro = carregar_tabela_combinada("alunos", "id,nome,sexo,ativo,arquivado")
+    df_professores, _ = carregar_tabela_combinada("professores", "id,ativo,arquivado")
+    df_turmas, _ = carregar_tabela_combinada("turmas", "id,ativo")
 
     if not df_alunos.empty:
         df_alunos = df_alunos[(df_alunos["ativo"].astype(str).isin(["1", "True", "1.0"])) &
