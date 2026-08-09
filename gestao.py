@@ -368,7 +368,7 @@ else:
 
 if not df_turmas.empty:
     if not df_ativos.empty and 'turma_id' in df_ativos.columns:
-        df_ativos['turma_id_str'] = df_ativos['turma_id'].astype(str)
+        df_ativos['turma_id_str'] = df_ativos['turma_id'].astype(str).str.replace(r'\.0$', '', regex=True)
         contagem = df_ativos.groupby('turma_id_str').size().reset_index(name='Matriculados')
         df_turmas['id_str'] = df_turmas['id'].astype(str)
         df_turmas = pd.merge(df_turmas, contagem, left_on='id_str', right_on='turma_id_str', how='left').fillna(0)
@@ -403,9 +403,20 @@ nome_escola = "Escola Municipal"
 if not df_escola.empty:
     nome_escola = df_escola.iloc[0].get('nome_escola', nome_escola)
 
+# Tenta usar a logo de verdade no círculo do cabeçalho; se não achar o
+# arquivo, cai de volta pro emoji genérico, sem quebrar a página.
+import base64
+_logo_html = '🏫'
+try:
+    with open("assets/logo.png", "rb") as _f:
+        _logo_b64 = base64.b64encode(_f.read()).decode("ascii")
+    _logo_html = f'<img src="data:image/png;base64,{_logo_b64}" style="width:100%;height:100%;object-fit:contain;border-radius:16px;">'
+except Exception:
+    pass
+
 st.markdown(f"""
     <div class="header-card">
-        <div class="logo-circle">🏫</div>
+        <div class="logo-circle">{_logo_html}</div>
         <div>
             <span class="badge">ESCOLAGEST • V16</span>
             <span class="badge-blue">PAINEL DE GESTÃO ESCOLAR</span>
@@ -417,6 +428,10 @@ st.markdown(f"""
 # =========================================================
 # NAVEGAÇÃO
 # =========================================================
+try:
+    st.sidebar.image("assets/logo.png", use_container_width=True)
+except Exception:
+    pass
 st.sidebar.markdown("### 🛡️ João - Secretário Escolar - Gestão")
 menu = st.sidebar.radio("Menu Principal", [
     "📊 Dashboard", "👥 Alunos", "🏫 Turmas & Vagas", "👨‍🏫 Professores", "🧑‍💼 Funcionários", "🏢 Dados da Escola"
