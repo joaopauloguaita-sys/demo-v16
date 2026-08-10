@@ -49,18 +49,33 @@ def executar_sincronismo():
 
     for tab in tabelas:
         try:
-            # 1. ENVIAR PARA A NUVEM (SELECT * garante que abas como Diretores enviem tudo)
+            # 1. ENVIAR PARA A NUVEM PRIMEIRO (SELECT * garante que abas
+            # como Diretores enviem tudo) — é o estado local atual, já
+            # incluindo o que você acabou de editar/salvar agora.
             cursor.execute(f"SELECT * FROM {tab}")
             dados_locais = [dict(row) for row in cursor.fetchall()]
-            
-            if dados_locais:
-                _requisicao_com_retry("POST", f"{URL}/{tab}", headers=HEADERS, json=dados_locais)
 
-            # 2. BUSCAR DA NUVEM
-            res = _requisicao_com_retry("GET", f"{URL}/{tab}", headers=HEADERS)
-            if res.status_code == 200:
-                dados_nuvem = res.json()
-                
+            envio_ok = True
+            if dados_locais:
+                res_envio = _requisicao_com_retry("POST", f"{URL}/{tab}", headers=HEADERS, json=dados_locais)
+                if res_envio is None or res_envio.status_code not in (200, 201):
+                    envio_ok = False
+                    status = res_envio.status_code if res_envio is not None else "sem resposta"
+                    texto = res_envio.text[:300] if res_envio is not None else ""
+                    erros.append(f"{tab}: falha ao enviar pra nuvem (status {status})")
+                    logger.error(f"Falha ao enviar {tab} pra nuvem: status {status} — {texto}")
+
+            # 2. BUSCAR DA NUVEM DE VOLTA — só faz isso se o envio acima
+            # funcionou. Se o envio falhou, a nuvem ainda está com uma
+            # versão desatualizada, e trazer ela de volta agora apagaria
+            # a sua edição local que nem chegou a ser enviada.
+            if not envio_ok:
+                continue
+
+            res_busca = _requisicao_com_retry("GET", f"{URL}/{tab}", headers=HEADERS)
+            if res_busca is not None and res_busca.status_code == 200:
+                dados_nuvem = res_busca.json()
+
                 # Sincroniza colunas dinamicamente
                 cursor.execute(f"PRAGMA table_info({tab})")
                 colunas_locais = [c[1] for c in cursor.fetchall()]
@@ -80,8 +95,11 @@ def executar_sincronismo():
                         cols = ", ".join(reg_filtrado.keys())
                         placeholders = ", ".join(["?" for _ in reg_filtrado])
                         cursor.execute(f"INSERT INTO {tab} ({cols}) VALUES ({placeholders})", list(reg_filtrado.values()))
-            
-            conn.commit()
+                conn.commit()
+            elif res_busca is not None:
+                erros.append(f"{tab}: falha ao buscar da nuvem (status {res_busca.status_code})")
+                logger.error(f"Falha ao buscar {tab} da nuvem: status {res_busca.status_code} — {res_busca.text[:300]}")
+
         except Exception as e:
             erros.append(f"{tab}: {str(e)}")
             logger.error(f"Erro em {tab}: {e}")

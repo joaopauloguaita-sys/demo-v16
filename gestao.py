@@ -693,7 +693,8 @@ elif menu == "☎️ Contato, Vendas e Suporte":
         <div>✉️ joao.secretarioescolar@gmail.com</div>
         <div>📱 (43) 99908-9871 &nbsp;•&nbsp; (43) 99936-1415</div>
         <div style="margin-top:20px; font-size:12px; color:#888;">
-            Desenvolvido por João Paulo A. Guaita &nbsp;•&nbsp; Licença de uso cedida gratuitamente
+            Desenvolvido por João Paulo A. Guaita &nbsp;•&nbsp; Licença de uso cedida gratuitamente<br>
+            © 2026 — Todos os direitos reservados
         </div>
     """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -703,6 +704,6 @@ elif menu == "☎️ Contato, Vendas e Suporte":
 # =========================================================
 st.markdown("""
     <div style="text-align:center; padding: 30px 0 10px 0; color:#6c7aa8; font-size:12px; letter-spacing:0.5px;">
-        Sistema Desenvolvido por João Paulo A. Guaita
+        © 2026 João Paulo A. Guaita — Todos os direitos reservados
     </div>
 """, unsafe_allow_html=True)

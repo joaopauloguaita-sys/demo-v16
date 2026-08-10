@@ -189,7 +189,7 @@ class LoginWindow(ctk.CTk):
                      text_color=CORES["dourado"]).pack()
         ctk.CTkLabel(card, text=_nome_escola_atual(),
                      font=fonte(10), text_color=CORES["subtexto"], wraplength=330).pack(pady=(2, 2))
-        ctk.CTkLabel(card, text="Sistema desenvolvido por João Paulo A. Guaita - Licença de uso cedida gratuitamente",
+        ctk.CTkLabel(card, text="© 2026 João Paulo A. Guaita - Todos os direitos reservados - Licença de uso cedida gratuitamente",
                      font=fonte(10, "bold"), text_color=CORES["acento"]).pack(pady=(0, 22))
 
         for lbl, attr, show in [("Login", "login_entry", ""), ("Senha", "senha_entry", "•")]:
@@ -742,7 +742,7 @@ class MainApp(ctk.CTk):
                      text_color=CORES["dourado"]).pack(pady=(5, 8))
         ctk.CTkLabel(card, text="✉  joao.secretarioescolar@gmail.com", font=fonte(12),
                      text_color=CORES["texto"]).pack(pady=2)
-        ctk.CTkLabel(card, text="📱  (43) 99908-9871   •   (43) 99937-1415", font=fonte(12),
+        ctk.CTkLabel(card, text="📱  (43) 99908-9871   •   (43) 99936-1415", font=fonte(12),
                      text_color=CORES["texto"]).pack(pady=(2, 25))
 
         ctk.CTkLabel(card, text="Desenvolvido por João Paulo A. Guaita  •  Licença de uso cedida gratuitamente",
@@ -1003,7 +1003,7 @@ class MainApp(ctk.CTk):
                       hover_color=CORES["acento_hover"], text_color=CORES["texto_claro"],
                       font=fonte(13, "bold"), command=reativar, width=200, height=38).pack(
                       side="right", padx=8, pady=10)
-        ctk.CTkLabel(bb, text="Sistema desenvolvido por João Paulo A. Guaita - Licença de uso cedida gratuitamente",
+        ctk.CTkLabel(bb, text="© 2026 João Paulo A. Guaita - Todos os direitos reservados - Licença de uso cedida gratuitamente",
                      font=fonte(11), text_color=CORES["subtexto"]).pack(side="left", padx=20)
 
     # ------------------------------------------------------------------ DASHBOARD
@@ -1031,7 +1031,7 @@ class MainApp(ctk.CTk):
         ctk.CTkLabel(txt_f, text=f"Bem-vindo(a), {self.usuario['nome']}! 👋",
                      font=fonte(13), text_color=CORES["texto_claro"]).pack(anchor="w")
         ctk.CTkLabel(txt_f,
-                     text="Sistema desenvolvido por João Paulo A. Guaita - Licença de uso cedida gratuitamente",
+                     text="© 2026 João Paulo A. Guaita - Todos os direitos reservados - Licença de uso cedida gratuitamente",
                      font=fonte(11), text_color=CORES["texto_claro"]).pack(anchor="w")
 
         # Estatísticas

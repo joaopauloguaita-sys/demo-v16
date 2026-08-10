@@ -53,6 +53,9 @@ def render():
     st.markdown('<div class="painel">', unsafe_allow_html=True)
     st.markdown('<div class="titulo-secao" style="font-size:16px;">📋 Comparativo por Escola</div>',
                unsafe_allow_html=True)
+    MAX_ESCOLAS = 10
+    ids_conectados = {e["id"] for e in escolas}
+
     if not df_alunos.empty:
         resumo = df_alunos.groupby("escola").size().reset_index(name="Alunos Ativos")
         if not df_professores.empty:
@@ -62,6 +65,21 @@ def render():
             turmas_por_escola = df_turmas.groupby("escola").size().reset_index(name="Turmas")
             resumo = resumo.merge(turmas_por_escola, on="escola", how="left")
         resumo = resumo.fillna(0)
+        resumo = resumo.rename(columns={"escola": "Escola"})
+    else:
+        resumo = pd.DataFrame(columns=["Escola", "Alunos Ativos", "Professores", "Turmas"])
+
+    linhas_extra = []
+    for i in range(1, MAX_ESCOLAS + 1):
+        escola_id = f"escola_{i}"
+        if escola_id in ids_conectados:
+            continue
+        linhas_extra.append({"Escola": f"Escola {i} — não conectada",
+                             "Alunos Ativos": "—", "Professores": "—", "Turmas": "—"})
+    if linhas_extra:
+        resumo = pd.concat([resumo, pd.DataFrame(linhas_extra)], ignore_index=True)
+
+    if not resumo.empty:
         st.dataframe(resumo, use_container_width=True, hide_index=True)
     else:
         st.info("Ainda não há dados de alunos para exibir.")

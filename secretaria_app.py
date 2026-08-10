@@ -85,7 +85,7 @@ modulo_path = dict(MODULOS)[escolha]
 modulo = importlib.import_module(modulo_path)
 st.markdown("""
     <div style="text-align:center; margin-bottom:18px;">
-        <div style="font-size:12px; color:#6c7aa8;">Sistema desenvolvido por João Paulo A. Guaita</div>
+        <div style="font-size:12px; color:#6c7aa8;">Sistema desenvolvido por João Paulo A. Guaita — © 2026, todos os direitos reservados</div>
         <div style="font-size:20px; font-weight:800; color:#e8ebff;">João - Secretário Escolar - Painel S.M.E.</div>
     </div>
     <hr style="border-color:#262c3d; margin-bottom:20px;">

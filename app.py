@@ -29,6 +29,7 @@ pra equipe de inspetores/portaria.
 📱 (43) 99908-9871 • (43) 99936-1415
 
 *Desenvolvido por João Paulo A. Guaita*
+*© 2026 — Todos os direitos reservados*
 """)
 
 # --- DESIGN (CSS) ---
@@ -71,7 +72,19 @@ def carregar_dados():
     except requests.exceptions.RequestException:
         return pd.DataFrame(), pd.DataFrame()
 
-st.title("🛡️ Inspetores Trá Lá Lá")
+@st.cache_data(ttl=60)
+def nome_escola_atual():
+    try:
+        res = requests.get(f"{SUPABASE_URL}/rest/v1/dados_escola?select=nome_escola&limit=1",
+                           headers=HEADERS, timeout=10)
+        dados = res.json()
+        if dados and dados[0].get("nome_escola"):
+            return dados[0]["nome_escola"]
+    except Exception:
+        pass
+    return "Escola Municipal"
+
+st.title(f"🛡️ Inspetores {nome_escola_atual()}")
 
 if not supabase_configurado():
     st.error("Credenciais do Supabase não configuradas. Verifique o arquivo .env.")

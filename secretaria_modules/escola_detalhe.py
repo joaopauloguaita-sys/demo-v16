@@ -322,8 +322,8 @@ def render():
     for aba, escola_id, rotulo in zip(abas, ids_em_ordem, rotulos):
         with aba:
             if escola_id not in escolas_conectadas:
-                st.info("Essa escola ainda não foi conectada. Cadastre as credenciais dela "
-                       f"nos Secrets do app, no bloco [{escola_id}].")
+                st.info("Escola ainda não conectada. Chame o suporte para iniciar a conexão. "
+                       "WhatsApp (43) 99908-9871.")
                 continue
             df_alunos = _sub_dashboard(escola_id)
             _botao_necessidades_especiais(escola_id, df_alunos)
